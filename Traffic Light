@@ -1,0 +1,105 @@
+/*********************************/
+/* CPE 185 - Final Project       */
+/* Two Lane Traffic Light System */
+/* Satwinder Singh               */                      
+/*********************************/
+
+// TO-DO
+// - Add 7-segmets
+//
+
+/* Notes */
+// * = pin numbers
+// check logic
+// How the multi lane buttons work
+// Mirroring the lanes
+
+#include "simpletools.h"
+
+#define C6 1047
+#define C7 2093
+
+int main ()
+{
+	void traffic_light1()
+	{
+		// Red Light
+		high(*);
+		pause(5000);
+		low(*);
+		
+		// Yellow Light
+		high(*);
+		pause(1000);
+		low(*);
+		
+		// Green Light; Always on
+		high(*);
+	}
+	
+	void crosswalk_light1()
+	{
+		//crosswalk light
+		low(*); // Red Light for crosswalk
+		high(*); // Green Light for crosswalk
+		pause(10000);
+		int note [] = {C6, C7, C6, C7, C6, C7, C6, C7, C6, C7}
+		for (int i = 0; i < 9; i++)
+		{
+			freqout(*, 1000, note[i]);
+		}
+		low(*); // Green Light for crosswalk
+		high(*); // Red Light for crosswalk; Always on
+	}
+	
+	while (1)
+	{
+		int button1 = input(*); // pedestrian crosswalk buttons 1.1 & 1.2
+		int button2 = input(*); // light traffic of lane 2
+		int button3 = input(*); // heavy traffic of lane 2
+		//int button4 = input(); // light traffic of lane 1
+		//int button5 = input(); // heavy traffic of lane 1
+		
+		if ( button2 == 1)
+		{
+			// Red Light for crosswalk; Always on
+			high(*);
+			
+			cog_run(traffic_light1, 128);
+
+			if ( button1 == 1)
+			{
+				low(*); // Green Light
+				
+				// Yellow Light
+				high(*);
+				pause(2000);
+				low(*);
+				
+				// Red Light
+				high(*);
+				
+				cog_run(crosswalk_light1, 128)
+				
+				// Red Light
+				pause(2000);
+				low(*);
+				
+				// Yellow Light
+				high(*);
+				pause(500);
+				low(*);
+				
+				// Green Light; Always on
+				high(*);
+			}
+		}
+		else if ( button2 && button3 )
+		{
+			// Yellow Light
+			high(*);
+			pause(500);
+			low(*);
+		}
+	}
+}
